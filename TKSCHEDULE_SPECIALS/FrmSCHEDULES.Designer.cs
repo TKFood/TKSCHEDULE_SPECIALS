@@ -137,6 +137,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FrmSCHEDULES";
             this.Text = "FrmSCHEDULES";
+            this.Load += new System.EventHandler(this.FrmSCHEDULES_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);

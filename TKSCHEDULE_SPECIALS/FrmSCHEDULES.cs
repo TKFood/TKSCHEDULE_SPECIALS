@@ -35,11 +35,39 @@ namespace TKSCHEDULE_SPECIALS
         {
             InitializeComponent();
         }
-
+        private void FrmSCHEDULES_Load(object sender, EventArgs e)
+        {
+            timer1.Enabled = true;
+            timer1.Interval = 1000 * 60; // 1 分鐘
+            timer1.Start();
+        }
         #region FUNCTION
+
+        /// <summary>
+        /// 每分鐘檢查1次，但每天指定時間執行1次
+        /// 0801
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void timer1_Tick(object sender, EventArgs e)
         {
+            string RUNTIME = DateTime.Now.ToString("HHmm");
+            string HHmm = "0801";
 
+            if (RUNTIME.Equals(HHmm))
+            {
+                try
+                {
+                    //轉入資料來客-X:\kldatabase.db
+                    //要指定來客記錄的db的磁碟-X:\kldatabase.db
+                    //X=\\192.168.1.101\Users\Administrator\AppData\Roaming\CounterServerData
+
+                    ADDTKMKt_visitors();
+                }
+                catch { }
+            }
+
+            Thread.Sleep(60000); // 暫停 1 分鐘 (60000 毫秒)
         }
         /// <summary>
         /// 轉入資料來客-X:\kldatabase.db
@@ -353,8 +381,9 @@ namespace TKSCHEDULE_SPECIALS
             MessageBox.Show("OK");
         }
 
+
         #endregion
 
-       
+      
     }
 }
