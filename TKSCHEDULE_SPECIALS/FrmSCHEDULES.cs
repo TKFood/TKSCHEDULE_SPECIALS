@@ -37,9 +37,10 @@ namespace TKSCHEDULE_SPECIALS
         }
 
         #region FUNCTION
+        private void timer1_Tick(object sender, EventArgs e)
+        {
 
-
-        #endregion
+        }
         /// <summary>
         /// 轉入資料來客-X:\kldatabase.db
         /// </summary>
@@ -52,11 +53,11 @@ namespace TKSCHEDULE_SPECIALS
             string connectionString;
             StringBuilder sbSql = new StringBuilder();
             SqlTransaction tran;
-         
+
             int result;
 
             SQLiteConnection SQLiteConnection = new SQLiteConnection();
- 
+
             //string MAXID = null;
             string MAX_Fdate = null;
 
@@ -153,7 +154,7 @@ namespace TKSCHEDULE_SPECIALS
                 //資料庫使用者密碼解密
                 sqlsb.Password = TKID.Decryption(sqlsb.Password);
                 sqlsb.UserID = TKID.Decryption(sqlsb.UserID);
-               
+
                 sqlConn = new SqlConnection(sqlsb.ConnectionString);
 
 
@@ -218,7 +219,7 @@ namespace TKSCHEDULE_SPECIALS
             //資料庫使用者密碼解密
             sqlsb.Password = TKID.Decryption(sqlsb.Password);
             sqlsb.UserID = TKID.Decryption(sqlsb.UserID);
-         
+
             sqlConn = new SqlConnection(sqlsb.ConnectionString);
 
             using (SqlConnection connection = sqlConn)
@@ -262,7 +263,7 @@ namespace TKSCHEDULE_SPECIALS
                     {
                         sqlTrans.Rollback();
                     }
-                    
+
                 }
 
             }
@@ -339,6 +340,8 @@ namespace TKSCHEDULE_SPECIALS
 
 
         }
+        #endregion
+
         #region BUTTON
         private void button1_Click(object sender, EventArgs e)
         {
@@ -349,8 +352,9 @@ namespace TKSCHEDULE_SPECIALS
             ADDTKMKt_visitors();
             MessageBox.Show("OK");
         }
+
         #endregion
 
-
+       
     }
 }
