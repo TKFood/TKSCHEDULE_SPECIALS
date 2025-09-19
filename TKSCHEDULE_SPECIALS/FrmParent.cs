@@ -18,7 +18,7 @@ using TKITDLL;
 namespace TKSCHEDULE_SPECIALS
 {
     public partial class FrmParent : Form
-    {
+    { 
         SqlConnection conn;
         MenuStrip MnuStrip;
         ToolStripMenuItem MnuStripItem;
