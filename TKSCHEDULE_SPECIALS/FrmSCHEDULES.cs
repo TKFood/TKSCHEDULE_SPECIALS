@@ -92,8 +92,8 @@ namespace TKSCHEDULE_SPECIALS
             try
             {
                 //MAXID = FINDTKMKt_visitorsMAXID();
-                //MAX_Fdate = FIND_TKMKt_visitorsMAX_Fdate();
-                MAX_Fdate = DateTime.Now.ToString("yyyy-MM-dd");
+                //找出目前有記錄的來客日期最大值
+                MAX_Fdate = FIND_TKMKt_visitorsMAX_Fdate();                
                 //MAX_Fdate = "2025-10-01 08:18:34";
 
                 if (!string.IsNullOrEmpty(MAX_Fdate))
@@ -179,7 +179,7 @@ namespace TKSCHEDULE_SPECIALS
             {
                 //20210902密
                 Class1 TKID = new Class1();//用new 建立類別實體
-                SqlConnectionStringBuilder sqlsb = new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings["dbconn"].ConnectionString);
+                SqlConnectionStringBuilder sqlsb = new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings["dbconnTKMK"].ConnectionString);
 
                 //資料庫使用者密碼解密
                 sqlsb.Password = TKID.Decryption(sqlsb.Password);
