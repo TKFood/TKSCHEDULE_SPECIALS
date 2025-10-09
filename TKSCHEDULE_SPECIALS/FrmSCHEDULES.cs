@@ -92,7 +92,9 @@ namespace TKSCHEDULE_SPECIALS
             try
             {
                 //MAXID = FINDTKMKt_visitorsMAXID();
-                MAX_Fdate = FIND_TKMKt_visitorsMAX_Fdate();
+                //MAX_Fdate = FIND_TKMKt_visitorsMAX_Fdate();
+                MAX_Fdate = DateTime.Now.ToString("yyyy-MM-dd");
+                //MAX_Fdate = "2025-10-01 08:18:34";
 
                 if (!string.IsNullOrEmpty(MAX_Fdate))
                 {
@@ -133,7 +135,7 @@ namespace TKSCHEDULE_SPECIALS
                     if (table.Rows.Count > 0)
                     {
                         ADDTOTKMKt_visitors(table);
-                        UPDATEt_visitors();
+                        DELETE_UPDATEt_visitors();
                     }
 
                     else
@@ -297,7 +299,7 @@ namespace TKSCHEDULE_SPECIALS
             }
         }
 
-        public void UPDATEt_visitors()
+        public void DELETE_UPDATEt_visitors()
         {
             SqlConnection sqlConn = new SqlConnection();
             SqlCommand sqlComm = new SqlCommand();
@@ -328,27 +330,26 @@ namespace TKSCHEDULE_SPECIALS
                 // ====================================================================
                 // 第一個 SQL 語句: 刪除重複的 id (保留 id 最小的那筆)
                 // ====================================================================
-                sbSql.AppendFormat(@"
-                                    -- 步驟 1: 找出並刪除重複的 id (保留 id 最小的記錄)
+                sbSql.AppendFormat(@"                                  
                                     WITH CTE_DuplicateRemover AS (
                                         SELECT 
                                             id,
-                                            -- PARTITION BY id 確保只對相同的 id 進行編號
-                                            -- ORDER BY id ASC 確保 id 最小的那筆記錄獲得 rn=1
-                                            ROW_NUMBER() OVER (PARTITION BY id ORDER BY id ASC) AS rn 
+                                            -- PARTITION BY Fdevice_sn 和 Fdate 的組合，確保只對「真正重複的資料」編號
+                                            -- ORDER BY id ASC 確保保留 id 最小（通常是插入最早）的那筆
+                                            ROW_NUMBER() OVER (
+                                                PARTITION BY Fdevice_sn, Fdate 
+                                                ORDER BY id ASC
+                                            ) AS rn 
                                         FROM 
                                             [TKMK].[dbo].[t_visitors]
                                         WHERE  
-                                             CONVERT(NVARCHAR, Fdate, 112) >= '20251001'
+                                            CONVERT(NVARCHAR, Fdate, 112) >= '20251001'
                                     )
                                     DELETE FROM t
                                     FROM [TKMK].[dbo].[t_visitors] t
                                     INNER JOIN CTE_DuplicateRemover cte 
                                         ON t.id = cte.id
                                     WHERE cte.rn > 1;
-
-                                    -- 由於上述 DELETE 已經執行，這裡不需要再額外執行 ExecuteNonQuery
-                                    -- 將兩個 SQL 放在一起，可以減少資料庫往返。
                                 ");
 
                 // ====================================================================
