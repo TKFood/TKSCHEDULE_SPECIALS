@@ -37,9 +37,17 @@ namespace TKSCHEDULE_SPECIALS
         }
         private void FrmSCHEDULES_Load(object sender, EventArgs e)
         {
+            // 啟用計時器
             timer1.Enabled = true;
-            timer1.Interval = 1000 * 60; // 1 分鐘
+
+            // *** 關鍵修改：將間隔設為 60 分鐘 ***
+            // 1000 毫秒/秒 * 60 秒/分鐘 * 60 分鐘/小時 = 3,600,000 毫秒
+            timer1.Interval = 1000 * 60 * 60; // 1 小時
+
             timer1.Start();
+
+            // 可以在這裡手動執行一次，確保程式啟動時立刻執行
+            timer1_Tick(null, null);
         }
         #region FUNCTION
 
@@ -50,24 +58,15 @@ namespace TKSCHEDULE_SPECIALS
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void timer1_Tick(object sender, EventArgs e)
-        {
-            string RUNTIME = DateTime.Now.ToString("HHmm");
-            string HHmm = "0801";
-
-            if (RUNTIME.Equals(HHmm))
+        {            
+            try
             {
-                try
-                {
-                    //轉入資料來客-X:\kldatabase.db
-                    //要指定來客記錄的db的磁碟-X:\kldatabase.db
-                    //X=\\192.168.1.101\Users\Administrator\AppData\Roaming\CounterServerData
-
-                    ADDTKMKt_visitors();
-                }
-                catch { }
+                // 執行您的主要任務
+                ADDTKMKt_visitors();              
             }
-
-            Thread.Sleep(60000); // 暫停 1 分鐘 (60000 毫秒)
+            catch (Exception ex)
+            {
+            }          
         }
         /// <summary>
         /// 轉入資料來客-X:\kldatabase.db
