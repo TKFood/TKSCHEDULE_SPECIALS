@@ -325,16 +325,44 @@ namespace TKSCHEDULE_SPECIALS
                 tran = sqlConn.BeginTransaction();
 
                 sbSql.Clear();
-
+                // ====================================================================
+                // 第一個 SQL 語句: 刪除重複的 id (保留 id 最小的那筆)
+                // ====================================================================
                 sbSql.AppendFormat(@"
-                                     UPDATE [TKMK].[dbo].[t_visitors]
+                                    -- 步驟 1: 找出並刪除重複的 id (保留 id 最小的記錄)
+                                    WITH CTE_DuplicateRemover AS (
+                                        SELECT 
+                                            id,
+                                            -- PARTITION BY id 確保只對相同的 id 進行編號
+                                            -- ORDER BY id ASC 確保 id 最小的那筆記錄獲得 rn=1
+                                            ROW_NUMBER() OVER (PARTITION BY id ORDER BY id ASC) AS rn 
+                                        FROM 
+                                            [TKMK].[dbo].[t_visitors]
+                                        WHERE  
+                                             CONVERT(NVARCHAR, Fdate, 112) >= '20251001'
+                                    )
+                                    DELETE FROM t
+                                    FROM [TKMK].[dbo].[t_visitors] t
+                                    INNER JOIN CTE_DuplicateRemover cte 
+                                        ON t.id = cte.id
+                                    WHERE cte.rn > 1;
+
+                                    -- 由於上述 DELETE 已經執行，這裡不需要再額外執行 ExecuteNonQuery
+                                    -- 將兩個 SQL 放在一起，可以減少資料庫往返。
+                                ");
+
+                // ====================================================================
+                // 第二個 SQL 語句: 執行資料更新
+                // ====================================================================
+                sbSql.AppendFormat(@"
+                                    -- 步驟 2: 執行 JOIN 更新
+                                    UPDATE [TKMK].[dbo].[t_visitors]
                                     SET [TT002]= [t_STORESNAME].[TT002],[STORESNAME]=[t_STORESNAME].[STORESNAME]
                                     FROM [TKMK].[dbo].[t_STORESNAME]
                                     WHERE [t_STORESNAME].[Fdevice_sn]=[t_visitors].[Fdevice_sn]
                                     AND [t_STORESNAME].[ISUSED]='Y'
-                                    AND ISNULL([t_visitors].[TT002],'')=''
-                                    ");
-
+                                    AND ISNULL([t_visitors].[TT002],'')='';
+                                ");
 
 
                 cmd.Connection = sqlConn;
