@@ -62,7 +62,8 @@ namespace TKSCHEDULE_SPECIALS
             try
             {
                 // 執行您的主要任務
-                ADDTKMKt_visitors();              
+                ADDTKMKt_visitors();
+                UPDATE_visitors();
             }
             catch (Exception ex)
             {
