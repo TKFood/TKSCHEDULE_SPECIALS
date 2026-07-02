@@ -52,7 +52,7 @@ namespace TKSCHEDULE_SPECIALS
         #region FUNCTION
 
         /// <summary>
-        /// 每分鐘檢查1次，但每天指定時間執行1次
+        /// 每天 1 小時執行1次
         /// 0801
         /// </summary>
         /// <param name="sender"></param>
@@ -396,6 +396,62 @@ namespace TKSCHEDULE_SPECIALS
 
 
         }
+
+        public void UPDATE_visitors()
+        {
+            SqlConnection sqlConn = new SqlConnection();
+            SqlCommand sqlComm = new SqlCommand();
+            string connectionString;
+            StringBuilder sbSql = new StringBuilder();
+            SqlTransaction tran;
+            SqlCommand cmd = new SqlCommand();
+            int result;
+            try
+            {
+                //20210902密
+                Class1 TKID = new Class1();//用new 建立類別實體
+                SqlConnectionStringBuilder sqlsb = new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings["dbconnTKMK"].ConnectionString);
+                //資料庫使用者密碼解密
+                sqlsb.Password = TKID.Decryption(sqlsb.Password);
+                sqlsb.UserID = TKID.Decryption(sqlsb.UserID);
+                sqlConn = new SqlConnection(sqlsb.ConnectionString);
+
+                StringBuilder SQL_EXE = new StringBuilder();
+
+                //觀光夜間時間段來客數據清零  (DATEPART(HOUR, [Fdate])>=20 OR DATEPART(HOUR, [Fdate])<=06)
+                //門市間時間段來客數據清零 (DATEPART(HOUR, [Fdate])>=22 OR DATEPART(HOUR, [Fdate])<=07)
+                SQL_EXE.AppendFormat(@"
+                                        UPDATE [TKMK].[dbo].[t_visitors]
+                                        SET [Fin_data]=0,[Fout_data]=0
+                                        WHERE [TT002] LIKE '%1067%'
+                                        AND ([Fin_data]>=1 OR [Fout_data]>=1)
+                                        AND (DATEPART(HOUR, [Fdate])>=20 OR DATEPART(HOUR, [Fdate])<=06)
+
+                                        UPDATE [TKMK].[dbo].[t_visitors]
+                                        SET [Fin_data]=0,[Fout_data]=0
+                                        WHERE  [TT002] LIKE '1065%'
+                                        AND ([Fin_data]>=1 OR [Fout_data]>=1)
+                                        AND (DATEPART(HOUR, [Fdate])>=22 OR DATEPART(HOUR, [Fdate])<=07)
+
+                                    ");
+
+                cmd.Connection = sqlConn;
+                using (SqlCommand command = new SqlCommand(SQL_EXE.ToString(), sqlConn))
+                {
+                    command.CommandTimeout = 60;
+                    sqlConn.Open();
+                    result = command.ExecuteNonQuery();
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                sqlConn.Close();
+            }
+        }
+
         #endregion
 
         #region BUTTON
@@ -409,9 +465,15 @@ namespace TKSCHEDULE_SPECIALS
             MessageBox.Show("OK");
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            UPDATE_visitors();
+            MessageBox.Show("OK");
+
+        }
 
         #endregion
 
-      
+
     }
 }
