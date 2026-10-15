@@ -37,6 +37,7 @@ namespace TKSCHEDULE_SPECIALS
         }
         private void FrmSCHEDULES_Load(object sender, EventArgs e)
         {
+            LoadAvailableDrives();
             // 啟用計時器
             timer1.Enabled = true;
 
@@ -50,7 +51,29 @@ namespace TKSCHEDULE_SPECIALS
             timer1_Tick(null, null);
         }
         #region FUNCTION
+        /// <summary>
+        /// 自動偵測本機可用硬碟並填入 ComboBox 下拉選單
+        /// </summary>
+        private void LoadAvailableDrives()
+        {
+            comboBoxDrives.Items.Clear();
 
+            var drives = DriveInfo.GetDrives()
+                .Where(d => d.IsReady && d.DriveType == DriveType.Fixed)
+                .ToList();
+
+            foreach (var drive in drives)
+            {
+                long freeSpaceGb = drive.TotalFreeSpace / 1024 / 1024 / 1024;
+                // 顯示例如 "C:\ (可用: 120 GB)"
+                comboBoxDrives.Items.Add($"{drive.Name} (可用: {freeSpaceGb} GB)");
+            }
+
+            if (comboBoxDrives.Items.Count > 0)
+            {
+                comboBoxDrives.SelectedIndex = 0; // 預設選擇第一個
+            }
+        }
         /// <summary>
         /// 每天 1 小時執行1次
         /// 0801
