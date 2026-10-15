@@ -27,7 +27,8 @@ namespace TKSCHEDULE_SPECIALS
 {
     public partial class FrmSCHEDULES : Form
     {
-
+        // 宣告一個旗標用來記錄目前是否正在執行同步（避免 Timer 重複觸發）
+        private bool isExecuting = false;
         int TIMEOUT_LIMITS = 240;
 
                
@@ -80,25 +81,52 @@ namespace TKSCHEDULE_SPECIALS
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void timer1_Tick(object sender, EventArgs e)
-        {            
+        private async void timer1_Tick(object sender, EventArgs e)
+        {
+            // 如果上一趟還沒跑完，直接跳過這次 Tick
+            if (isExecuting) return;
+
+            isExecuting = true; // 設定為正在執行
+
             try
             {
-                // 從下拉選單字串中解析出槽代號（例如從 "C:\ (可用...)" 取出 "C:\"）
-                string selectedText = comboBoxDrives.SelectedItem.ToString();
-                string driveLetter = selectedText.Substring(0, 3); // 取得 "C:\" 或 "D:\"
+                string sourcePath = @"X:\kldatabase.db";
 
-                // 決定目標路徑：存放在該槽底下的 temp 資料夾
+                if (comboBoxDrives.SelectedItem == null)
+                {
+                    // 注意：如果在 Timer 裡跳 MessageBox，當畫面停住時容易干擾，建議考慮用寫 Log 代替
+                    MessageBox.Show("請先選擇目標磁碟！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string selectedText = comboBoxDrives.SelectedItem.ToString();
+                string driveLetter = selectedText.Substring(0, 3);
+
                 string targetDirectory = Path.Combine(driveLetter, "TEMP");
                 string targetPath = Path.Combine(targetDirectory, "kldatabase_IMPORT.db");
 
-                // 執行您的主要任務
-                ADDTKMKt_visitors(targetPath);
-                UPDATE_visitors();
+                lblStatus.Text = "準備中...";
+
+                // 💡 加上 async 後，這裡的 await 就能正常運作了
+                bool isSuccess = await CopyDatabaseAsync(sourcePath, targetPath);
+
+                if (isSuccess)
+                {
+                    lblStatus.Text = "複製完成";
+                    ADDTKMKt_visitors(targetPath);
+                    lblStatus.Text = "完成！";
+                }
+                else
+                {
+                    lblStatus.Text = "複製失敗！";
+                    MessageBox.Show("資料庫複製失敗，請檢查網路連線或檔案狀態。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            catch (Exception ex)
+            finally
             {
-            }          
+                // 無論成功或失敗，執行完畢後一定要把旗標改回 false，好讓下次 Timer 可以正常執行
+                isExecuting = false;
+            }
         }
         /// <summary>
         /// 轉入資料來客-X:\kldatabase.db
