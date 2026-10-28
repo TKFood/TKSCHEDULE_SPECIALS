@@ -32,12 +32,12 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.comboBoxDrives = new System.Windows.Forms.ComboBox();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.comboBoxDrives = new System.Windows.Forms.ComboBox();
-            this.lblStatus = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -107,6 +107,25 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(970, 725);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
+            // comboBoxDrives
+            // 
+            this.comboBoxDrives.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxDrives.FormattingEnabled = true;
+            this.comboBoxDrives.Location = new System.Drawing.Point(3, 50);
+            this.comboBoxDrives.Name = "comboBoxDrives";
+            this.comboBoxDrives.Size = new System.Drawing.Size(148, 24);
+            this.comboBoxDrives.TabIndex = 106;
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Location = new System.Drawing.Point(363, 52);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(114, 16);
+            this.lblStatus.TabIndex = 107;
+            this.lblStatus.Text = "...";
+            // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
@@ -144,25 +163,6 @@
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // comboBoxDrives
-            // 
-            this.comboBoxDrives.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxDrives.FormattingEnabled = true;
-            this.comboBoxDrives.Location = new System.Drawing.Point(3, 48);
-            this.comboBoxDrives.Name = "comboBoxDrives";
-            this.comboBoxDrives.Size = new System.Drawing.Size(148, 24);
-            this.comboBoxDrives.TabIndex = 106;
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(363, 52);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(114, 16);
-            this.lblStatus.TabIndex = 107;
-            this.lblStatus.Text = "...";
             // 
             // FrmSCHEDULES
             // 
